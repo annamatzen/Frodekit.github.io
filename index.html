@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SF Crime: Two Decades of Data</title>
+  <style>
+    /* ── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f1a;
+      --surface:   #151928;
+      --card:      #1c2237;
+      --border:    #252d47;
+      --accent:    #16c79a;
+      --accent2:   #e94560;
+      --text:      #e2e8f0;
+      --muted:     #8892a4;
+      --radius:    12px;
+      --transition: 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Navigation ─────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13, 15, 26, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-brand {
+      font-size: 0.95rem; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.88rem; color: var(--muted); font-weight: 500;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ───────────────────────────────────────────────────── */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+      background: linear-gradient(160deg, #0d0f1a 0%, #0f1e35 50%, #0d0f1a 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(22,199,154,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(233,69,96,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-block; margin-bottom: 1.2rem;
+      padding: 0.3rem 0.9rem;
+      background: rgba(22,199,154,0.12);
+      border: 1px solid rgba(22,199,154,0.3);
+      border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      max-width: 640px; margin: 0 auto 2.5rem;
+      font-size: 1.1rem; color: var(--muted);
+    }
+    .hero-stats {
+      display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      text-align: center; min-width: 110px;
+    }
+    .stat-value {
+      display: block; font-size: 1.6rem; font-weight: 700;
+      color: var(--accent); line-height: 1.1;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Section layout ─────────────────────────────────────────── */
+    section { padding: 5rem 2rem; }
+    section:nth-child(even) { background: var(--surface); }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-header { margin-bottom: 3rem; }
+    .section-header .label {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .section-header h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    .section-header p { color: var(--muted); max-width: 600px; font-size: 1rem; }
+
+    /* ── Cards grid ─────────────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.6rem;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      display: flex; flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(22,199,154,0.35);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .card-icon.teal  { background: rgba(22,199,154,0.12); }
+    .card-icon.red   { background: rgba(233,69,96,0.12); }
+    .card-icon.blue  { background: rgba(99,179,237,0.12); }
+    .card-icon.gold  { background: rgba(246,173,85,0.12); }
+
+    .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .card p  { font-size: 0.9rem; color: var(--muted); flex: 1; margin-bottom: 1.2rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1.1rem; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600;
+      transition: all var(--transition); cursor: pointer;
+      border: none; text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent); color: #0d0f1a;
+    }
+    .btn-primary:hover { background: #12b389; text-decoration: none; }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 1px solid rgba(22,199,154,0.4);
+    }
+    .btn-outline:hover { background: rgba(22,199,154,0.08); text-decoration: none; }
+
+    /* ── Featured viz (image) ───────────────────────────────────── */
+    .featured {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: center;
+    }
+    @media (max-width: 720px) { .featured { grid-template-columns: 1fr; } }
+    .featured-text h2 {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700; margin-bottom: 0.8rem; letter-spacing: -0.02em;
+    }
+    .featured-text p { color: var(--muted); margin-bottom: 1.5rem; }
+    .featured-img {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .featured-img img { width: 100%; display: block; }
+
+    /* ── Crimes list ────────────────────────────────────────────── */
+    .crimes-list {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem;
+    }
+    .crime-tag {
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.8rem; font-weight: 500;
+      background: rgba(22,199,154,0.1);
+      border: 1px solid rgba(22,199,154,0.25);
+      color: var(--accent);
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* ── Responsive nav ─────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero { padding: 4rem 1.5rem 3.5rem; }
+      section { padding: 3.5rem 1.5rem; }
+    }
+
+    /* ── Fade-in animation ──────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.7s ease both; }
+    .hero > *:nth-child(2) { animation-delay: 0.1s; }
+    .hero > *:nth-child(3) { animation-delay: 0.2s; }
+    .hero > *:nth-child(4) { animation-delay: 0.3s; }
+    .hero > *:nth-child(5) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ───────────────────────────────────────────────────────── -->
+<nav>
+  <span class="nav-brand">SF Crime Analysis</span>
+  <ul class="nav-links">
+    <li><a href="#maps">Maps</a></li>
+    <li><a href="#temporal">Temporal</a></li>
+    <li><a href="#static">Trends</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-tag">02806 Social Data Analysis</div>
+  <h1>SF Crime:<br><span>Two Decades of Data</span></h1>
+  <p>
+    Exploring patterns, hotspots, and trends in San Francisco crime data
+    from 2003 to 2025 — across time, space, and category.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-value">3M+</span>
+      <span class="stat-label">Incidents</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">22</span>
+      <span class="stat-label">Years</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">10</span>
+      <span class="stat-label">Districts</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">8</span>
+      <span class="stat-label">Crime Types</span>
+    </div>
+  </div>
+  <div>
+    <a href="#maps" class="btn btn-primary">Explore the maps &darr;</a>
+    &nbsp;
+    <a href="#temporal" class="btn btn-outline">See time patterns</a>
+  </div>
+</header>
+
+<!-- ── Maps section ──────────────────────────────────────────────────────── -->
+<section id="maps">
+  <div class="container">
+    <div class="section-header">
+      <div class="label">Geospatial</div>
+      <h2>Where does crime concentrate?</h2>
+      <p>
+        Choropleth maps show how different crimes cluster across San Francisco's
+        10 police districts. Folium heatmaps and scatter plots let you zoom into
+        individual hotspots.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon teal">&#x1F5FA;</div>
+        <h3>Larceny Theft — District Concentration</h3>
+        <p>
+          Which districts see disproportionately more (or fewer) larceny thefts
+          than the city average? A ratio above 1 means the district is a hotspot.
+        </p>
+        <a href="visualizations/choropleth_larceny_ratio.html" class="btn btn-primary">Open map &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon red">&#x1F697;</div>
+        <h3>Sunday Car-Theft Risk</h3>
+        <p>
+          Planning where to park on a Sunday? This map shows vehicle theft counts
+          by district, revealing which neighborhoods are highest risk.
+        </p>
+        <a href="visualizations/choropleth_sunday_theft.html" class="btn btn-primary">Open map &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon blue">&#x1F4CD;</div>
+        <h3>Drug Offense Locations (Jun–Jul 2016)</h3>
+        <p>
+          Individual drug offense incidents plotted as points for a two-month
+          window, revealing spatial clusters at the street level.
+        </p>
+        <a href="visualizations/folium_drug_scatter.html" class="btn btn-primary">Open map &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon gold">&#x1F525;</div>
+        <h3>Assault Heatmap (All Years)</h3>
+        <p>
+          A density heatmap of all assault incidents across the full 22-year
+          period, showing where violence is persistently concentrated.
+        </p>
+        <a href="visualizations/folium_assault_heatmap.html" class="btn btn-primary">Open map &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Temporal section ──────────────────────────────────────────────────── -->
+<section id="temporal">
+  <div class="container">
+    <div class="section-header">
+      <div class="label">Temporal Patterns</div>
+      <h2>When do crimes happen — and has that changed?</h2>
+      <p>
+        These interactive Plotly charts let you compare hourly distributions
+        across crime types, and see how patterns have shifted year by year.
+        Click legend items to toggle traces on and off.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon teal">&#x23F0;</div>
+        <h3>Hourly Crime Distribution</h3>
+        <p>
+          What hour of the day is each crime type most likely to occur?
+          Click on crime types in the legend to build up comparisons one
+          layer at a time.
+        </p>
+        <a href="visualizations/hourly_crime_interactive.html" class="btn btn-primary">Explore chart &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon red">&#x1F3AC;</div>
+        <h3>Animated Patterns by Year (2003–2025)</h3>
+        <p>
+          Watch how hourly crime patterns have evolved across two decades.
+          The COVID-19 years (2020–2021) are clearly visible as disruptions.
+          Press play and observe.
+        </p>
+        <a href="visualizations/animated_hourly_patterns.html" class="btn btn-primary">Watch animation &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Static / trends section ───────────────────────────────────────────── -->
+<section id="static">
+  <div class="container">
+    <div class="featured">
+      <div class="featured-text">
+        <div class="section-header" style="margin-bottom:1.5rem;">
+          <div class="label">Long-term Trends</div>
+        </div>
+        <h2>Two decades of change</h2>
+        <p>
+          Yearly incident counts for the eight focus crimes, plotted from 2003
+          to 2025. The COVID-19 dip in 2020 is visible across nearly every
+          category. Larceny theft dominates in volume but has been declining
+          since its mid-2000s peak.
+        </p>
+        <p style="margin-top:0.8rem;">
+          Warrant-related arrests show a sharp rise in the 2010s, while drug
+          offenses spike and then fall — consistent with shifting enforcement
+          priorities across multiple mayoral administrations.
+        </p>
+        <a href="images/yearly_crime_trends.png" target="_blank" class="btn btn-outline" style="margin-top:1rem;">
+          Full-size image &rarr;
+        </a>
+      </div>
+      <div class="featured-img">
+        <img src="images/yearly_crime_trends.png" alt="Yearly crime trends in SF 2003-2025" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About section ─────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="section-header">
+      <div class="label">About this project</div>
+      <h2>Focus crimes &amp; data sources</h2>
+      <p>
+        This site presents analysis of San Francisco Police Department incident
+        reports covering 2003 to 2025 — two datasets merged and cleaned for
+        consistent category mapping across time.
+      </p>
+    </div>
+
+    <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+      <div class="card">
+        <h3>Personal Focus Crimes</h3>
+        <p>The eight crime types analysed throughout the course:</p>
+        <div class="crimes-list">
+          <span class="crime-tag">Assault</span>
+          <span class="crime-tag">Robbery</span>
+          <span class="crime-tag">Burglary</span>
+          <span class="crime-tag">Larceny Theft</span>
+          <span class="crime-tag">Motor Vehicle Theft</span>
+          <span class="crime-tag">Drug Offense</span>
+          <span class="crime-tag">Warrant</span>
+          <span class="crime-tag">Other Offenses</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Data Sources</h3>
+        <p>
+          SFPD Incident Reports: two open datasets from the City of San Francisco,
+          covering 2003–2018 (historical) and 2018–present, merged on shared
+          incident identifiers and unified category names.
+        </p>
+        <a href="https://data.sfgov.org" class="btn btn-outline" target="_blank">SF Open Data &rarr;</a>
+      </div>
+
+      <div class="card">
+        <h3>Built with</h3>
+        <p>
+          Analysis in Python (pandas, matplotlib). Interactive maps via Plotly
+          Express and Folium. Site hosted on GitHub Pages — zero build tools,
+          plain HTML and CSS.
+        </p>
+        <p style="margin-top:0.5rem; font-size:0.82rem;">DTU 02806 &mdash; Spring 2026</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    SF Crime Analysis &mdash; DTU 02806 Social Data Analysis and Visualization &mdash; 2026<br>
+    <span style="font-size:0.8rem;">Data: <a href="https://data.sfgov.org" target="_blank">San Francisco Open Data</a></span>
+  </p>
+</footer>
+
+</body>
+</html>
