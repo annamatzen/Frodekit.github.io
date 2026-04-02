@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SF Crime: The Post-Pandemic Shift | 02806</title>
+  <style>
+    /* ── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f1a;
+      --surface:   #151928;
+      --card:      #1c2237;
+      --border:    #252d47;
+      --accent:    #16c79a;
+      --accent2:   #e94560;
+      --text:      #e2e8f0;
+      --muted:     #8892a4;
+      --radius:    12px;
+      --transition: 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Navigation ─────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13, 15, 26, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-brand {
+      font-size: 0.95rem; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .nav-brand:hover { text-decoration: none; opacity: 0.85; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.88rem; color: var(--muted); font-weight: 500;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ───────────────────────────────────────────────────── */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+      background: linear-gradient(160deg, #0d0f1a 0%, #0f1e35 50%, #0d0f1a 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(233,69,96,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(22,199,154,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-block; margin-bottom: 1.2rem;
+      padding: 0.3rem 0.9rem;
+      background: rgba(233,69,96,0.12);
+      border: 1px solid rgba(233,69,96,0.3);
+      border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent2);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 span { color: var(--accent2); }
+    .hero .subtitle {
+      max-width: 660px; margin: 0 auto 2.5rem;
+      font-size: 1.12rem; color: var(--muted); line-height: 1.65;
+    }
+    .hero-stats {
+      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      text-align: center; min-width: 120px;
+    }
+    .stat-value {
+      display: block; font-size: 1.7rem; font-weight: 700;
+      color: var(--accent2); line-height: 1.1;
+    }
+    .stat-value.green { color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Section layout ─────────────────────────────────────────── */
+    section { padding: 5rem 2rem; }
+    section:nth-child(even) { background: var(--surface); }
+
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .section-label.red { color: var(--accent2); }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── Prose ───────────────────────────────────────────────────── */
+    .prose {
+      font-size: 1.03rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+    .prose p { margin-bottom: 1.1rem; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose .highlight { color: var(--accent2); font-weight: 600; }
+    .prose .highlight-teal { color: var(--accent); font-weight: 600; }
+
+    /* ── Crime tags ─────────────────────────────────────────────── */
+    .crimes-list {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0 1rem;
+    }
+    .crime-tag {
+      padding: 0.25rem 0.7rem;
+      border-radius: 100px;
+      font-size: 0.8rem; font-weight: 500;
+      background: rgba(22,199,154,0.1);
+      border: 1px solid rgba(22,199,154,0.25);
+      color: var(--accent);
+    }
+
+    /* ── Visualization figures ───────────────────────────────────── */
+    .viz-figure {
+      margin: 2.5rem 0;
+    }
+
+    .viz-figure img {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .embed-wrapper {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--card);
+    }
+    .embed-wrapper iframe {
+      width: 100%;
+      height: 520px;
+      border: none;
+      display: block;
+    }
+
+    figcaption {
+      margin-top: 0.8rem;
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-style: italic;
+    }
+    figcaption strong {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ── Pull quote ─────────────────────────────────────────────── */
+    .pull-quote {
+      border-left: 3px solid var(--accent2);
+      padding: 0.8rem 1.4rem;
+      margin: 1.8rem 0;
+      background: rgba(233,69,96,0.05);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .pull-quote p {
+      font-size: 1.08rem; font-style: italic; color: var(--text);
+      margin: 0;
+    }
+
+    /* ── References ─────────────────────────────────────────────── */
+    .references-list {
+      list-style: decimal;
+      padding-left: 1.4rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 2.1;
+    }
+    .references-list a { color: var(--accent); }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero { padding: 4rem 1.5rem 3.5rem; }
+      section { padding: 3.5rem 1.5rem; }
+      .embed-wrapper iframe { height: 380px; }
+    }
+
+    /* ── Fade-in ─────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fadeUp 0.65s ease both; }
+    .hero > *:nth-child(2) { animation-delay: 0.1s; }
+    .hero > *:nth-child(3) { animation-delay: 0.2s; }
+    .hero > *:nth-child(4) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ───────────────────────────────────────────────────────── -->
+<nav>
+  <a href="index.html" class="nav-brand">&larr; SF Crime Analysis</a>
+  <ul class="nav-links">
+    <li><a href="#big-picture">The Big Picture</a></li>
+    <li><a href="#geographic">Geographic Shift</a></li>
+    <li><a href="#districts">By District</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-tag">02806 &middot; Assignment 2 &middot; Data Story</div>
+  <h1>The Anatomy of SF's<br><span>Post-Pandemic Crime Shift</span></h1>
+  <p class="subtitle">
+    When COVID-19 emptied San Francisco's streets in 2020, overall crime
+    plummeted &mdash; but one category went the other way. Motor vehicle theft
+    surged, and it never came back down.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-value">+51%</span>
+      <span class="stat-label">MVT rise 2019&rarr;2022</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value green">&minus;21%</span>
+      <span class="stat-label">Larceny vs 2019</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">8,800</span>
+      <span class="stat-label">MVT incidents 2023</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── Introduction ─────────────────────────────────────────────────────── -->
+<section id="intro">
+  <div class="container">
+    <div class="section-label">The Dataset</div>
+    <h2>Two decades of San Francisco crime reports</h2>
+    <div class="prose">
+      <p>
+        San Francisco's police department records every incident reported to
+        officers. The city makes this data publicly available, and it covers
+        over 3 million reports from 2003 to 2025 &mdash; spanning 10 policing
+        districts and dozens of crime categories. This story focuses on eight
+        crime types, sometimes called "focus crimes" in the course that produced
+        this analysis:
+      </p>
+      <div class="crimes-list">
+        <span class="crime-tag">Assault</span>
+        <span class="crime-tag">Robbery</span>
+        <span class="crime-tag">Burglary</span>
+        <span class="crime-tag">Larceny Theft</span>
+        <span class="crime-tag">Motor Vehicle Theft</span>
+        <span class="crime-tag">Drug Offense</span>
+        <span class="crime-tag">Warrant</span>
+        <span class="crime-tag">Other Offenses</span>
+      </div>
+      <p>
+        The dataset has its quirks. These are <em>reported</em> incidents, not
+        confirmed crimes, and not everything gets reported. Enforcement
+        priorities shift, police districts are redrawn, and counting methods
+        change. Still, for crimes that almost always get reported &mdash;
+        especially vehicle theft, where insurance requires a police report
+        &mdash; the counts are relatively reliable proxies for what's actually
+        happening on the ground.
+      </p>
+      <p>
+        The central question here is simple: what did COVID-19 do to crime in
+        San Francisco, and what happened next?
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Big Picture ──────────────────────────────────────────────────────── -->
+<section id="big-picture">
+  <div class="container">
+    <div class="section-label red">The Big Picture</div>
+    <h2>Not all crimes recovered equally</h2>
+    <div class="prose">
+      <p>
+        The pandemic brought San Francisco to a near-standstill in spring 2020.
+        Offices emptied, restaurants closed, and foot traffic on city streets
+        collapsed. As you'd expect, crime dropped. Larceny theft &mdash;
+        opportunistic theft of property from people, cars, and stores &mdash;
+        fell sharply, as did robbery and assault. With fewer people out, there
+        were simply fewer opportunities.
+      </p>
+      <p>
+        But motor vehicle theft moved in the opposite direction.
+        <span class="highlight">In 2019, SFPD recorded 5,305 vehicle theft incidents.
+        By 2020 &mdash; the lockdown year &mdash; that number had jumped to 7,379.</span>
+        By 2022 it peaked at 8,031, and 2023 set a new high at 8,800.
+        That's a 51% increase from pre-pandemic levels, sustained over four years.
+      </p>
+
+      <div class="pull-quote">
+        <p>When San Francisco's streets emptied, most criminals stayed home too.
+        Car thieves didn't &mdash; they found the quieter streets made it
+        easier, not harder.</p>
+      </div>
+
+      <p>
+        Meanwhile, larceny theft &mdash; historically the most common of the
+        eight focus crimes by a wide margin &mdash; dropped sharply in 2020 and
+        has never returned to pre-pandemic levels. By 2023 it was still
+        <span class="highlight-teal">21% below its 2019 count</span>, likely
+        reflecting the long-term shift to remote work and the slower recovery
+        of downtown foot traffic.
+      </p>
+    </div>
+
+    <figure class="viz-figure">
+      <img src="images/crime_shift_trends.png"
+           alt="Line chart showing yearly SF crime trends 2016-2024" />
+      <figcaption>
+        <strong>Figure 1.</strong> Yearly incident counts for eight crime
+        categories in San Francisco, 2016&ndash;2024. The shaded region marks
+        the initial COVID-19 lockdown period (early&ndash;late 2020). Most
+        crimes dipped in 2020 and partially recovered, following the pattern
+        you'd expect when human activity suddenly contracts. Motor Vehicle
+        Theft (red line) is the exception: it rose sharply in 2020 and kept
+        climbing. Larceny Theft (teal line), previously the dominant category,
+        dropped and stayed down. The two labeled annotations show the percentage
+        change relative to 2019 for each of these headline trends.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ── Geographic Shift ─────────────────────────────────────────────────── -->
+<section id="geographic">
+  <div class="container">
+    <div class="section-label">Geographic Shift</div>
+    <h2>Where did car thieves go?</h2>
+    <div class="prose">
+      <p>
+        Rising citywide counts alone don't tell the full story. To understand
+        what changed, it helps to watch <em>where</em> the crime was happening
+        year by year. The map below shows the density of motor vehicle theft
+        incidents across San Francisco from 2016 to 2024, animated one year at
+        a time.
+      </p>
+      <p>
+        Step through the years and you'll notice two things. First, pre-pandemic
+        hotspots &mdash; concentrated in the eastern and southern parts of the
+        city &mdash; were already prominent. Second, after 2020, the heat
+        intensifies and begins spreading into neighborhoods that previously saw
+        lower rates. Districts like Ingleside and Mission, which sit inland and
+        border residential areas, saw some of the sharpest proportional
+        increases.
+      </p>
+      <p>
+        One well-documented contributor to this shift was the catalytic
+        converter theft epidemic. Catalytic converters contain platinum-group
+        metals, and their street value spiked during the pandemic due to supply
+        chain disruptions. Thieves could steal one in under a minute with a
+        battery-powered saw. Because catalytic converter theft gets counted as
+        motor vehicle theft in SFPD's records, part of what we're seeing in
+        this data is less "cars being driven away" and more "a specific
+        component being cut off while the car sat parked." That distinction
+        matters for how you interpret the geographic spread.
+      </p>
+    </div>
+
+    <figure class="viz-figure">
+      <div class="embed-wrapper">
+        <iframe src="visualizations/mvt_heatmap_by_year.html"
+                title="Animated heatmap of Motor Vehicle Theft in SF 2016-2024">
+        </iframe>
+      </div>
+      <figcaption>
+        <strong>Figure 2.</strong> Animated heat map of Motor Vehicle Theft
+        incidents across San Francisco, 2016&ndash;2024, showing approximately
+        2,500 randomly sampled incidents per year. Use the timeline slider at
+        the bottom to step through years, or press the play button. Brighter
+        areas indicate higher concentrations of incidents. Notice how the heat
+        intensifies after 2020 and spreads into areas that were previously
+        cooler &mdash; particularly in the southern and western districts.
+        The map uses a dark CARTO base layer to make density differences easier
+        to see.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ── Districts ────────────────────────────────────────────────────────── -->
+<section id="districts">
+  <div class="container">
+    <div class="section-label red">District Breakdown</div>
+    <h2>A tale of ten districts</h2>
+    <div class="prose">
+      <p>
+        Looking at individual police districts sharpens the picture. The chart
+        below compares motor vehicle theft counts in 2019 (pre-pandemic
+        baseline) and 2022 (post-pandemic peak) for each of SF's ten districts,
+        sorted by 2022 volume.
+      </p>
+      <p>
+        <span class="highlight">Bayview topped the 2022 count with 1,412
+        incidents</span>, up 63% from 2019. But the most dramatic proportional
+        change was in Ingleside, which nearly doubled from 607 to 1,202
+        incidents &mdash; a 99% increase. Mission saw a 73% rise. These are
+        predominantly residential and mixed-use neighborhoods with a lot of
+        street parking, which creates the ideal conditions for both catalytic
+        converter theft and conventional vehicle theft.
+      </p>
+      <p>
+        No district was unaffected &mdash; every bar for 2022 sits above its
+        2019 counterpart. But the magnitude varies. Northern and Southern
+        districts, which cover downtown and the densest commercial areas, saw
+        smaller relative increases, possibly because less street parking exists
+        there, or because the remote work shift reduced the pool of cars left
+        parked during business hours.
+      </p>
+      <p>
+        Hover over the bars for exact counts. The interactive nature of this
+        chart is intentional: you should verify these claims yourself rather
+        than just taking my word for them.
+      </p>
+    </div>
+
+    <figure class="viz-figure">
+      <div class="embed-wrapper">
+        <iframe src="visualizations/mvt_district_comparison.html"
+                title="Grouped bar chart of MVT by district, 2019 vs 2022">
+        </iframe>
+      </div>
+      <figcaption>
+        <strong>Figure 3.</strong> Motor Vehicle Theft incident counts for each
+        of SF's 10 police districts, comparing 2019 (teal, pre-COVID baseline)
+        and 2022 (red, post-COVID peak). Districts are sorted by 2022 count,
+        so the hardest-hit areas appear on the left. Hover over any bar for
+        the exact incident count and, for 2022 bars, the percentage change from
+        2019. Every district saw an increase, but the scale varied considerably:
+        Ingleside nearly doubled while downtown districts saw more modest rises.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ── Limitations ──────────────────────────────────────────────────────── -->
+<section id="limitations">
+  <div class="container">
+    <div class="section-label">Critical Reflection</div>
+    <h2>What the data can &mdash; and can&rsquo;t &mdash; tell us</h2>
+    <div class="prose">
+      <p>
+        Vehicle theft is one of the most reliably reported crimes in this
+        dataset, because insurance almost always requires a police report. So
+        the counts here are probably closer to the true level of theft than,
+        say, drug offenses, where reporting and enforcement patterns heavily
+        shape the numbers. That makes the MVT trend more trustworthy than most.
+      </p>
+      <p>
+        That said, this data cannot tell us <em>why</em> vehicle theft rose.
+        The catalytic converter hypothesis is credible and well-supported by
+        news coverage, but it's not something I can verify directly from this
+        dataset &mdash; SFPD records don't distinguish between a stolen car
+        and a stripped one. The rise could reflect economic hardship, reduced
+        deterrence from lighter foot traffic, a specific theft market that
+        opened up, or all three simultaneously. These causes are impossible to
+        disentangle from incident counts alone.
+      </p>
+      <p>
+        It's also worth noting that district-level patterns can mislead.
+        District boundaries don't map neatly onto neighborhoods, and population
+        density varies enormously across districts. Bayview has more MVT in
+        absolute terms partly because it's a large district with a lot of
+        residential street parking &mdash; not necessarily because any given
+        block is more dangerous. Per-capita or per-registered-vehicle rates
+        would be a better denominator, but those numbers weren't part of this
+        analysis.
+      </p>
+      <p>
+        Finally: a pattern in the data is not a policy prescription. Seeing
+        that Ingleside doubled its MVT count doesn't mean Ingleside needs more
+        police patrols. It might mean better street lighting, fewer parking
+        spots, or a coordinated response to the catalytic converter market.
+        Anyone using this analysis to argue for resource allocation should
+        pair it with community input and broader context &mdash; something no
+        chart can substitute for.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── References ───────────────────────────────────────────────────────── -->
+<section id="references">
+  <div class="container">
+    <div class="section-label">Sources</div>
+    <h2>References</h2>
+    <ol class="references-list">
+      <li>
+        San Francisco Police Department. <em>Police Department Incident Reports:
+        2018 to Present</em>.
+        <a href="https://data.sfgov.org" target="_blank">data.sfgov.org</a>
+      </li>
+      <li>
+        San Francisco Police Department. <em>Police Department Incident Reports:
+        Historical 2003 to May 2018</em>.
+        <a href="https://data.sfgov.org" target="_blank">data.sfgov.org</a>
+      </li>
+      <li>
+        Fracassa, D. (2022). <em>Catalytic converter thefts surge across Bay
+        Area as metal prices soar</em>. San Francisco Chronicle.
+      </li>
+      <li>
+        Segel, E. &amp; Heer, J. (2010). Narrative Visualization: Telling
+        Stories with Data. <em>IEEE Transactions on Visualization and Computer
+        Graphics</em>, 16(6), 1139&ndash;1148.
+      </li>
+      <li>
+        Richardson, R., Schultz, J., &amp; Crawford, K. (2019). Dirty Data,
+        Bad Predictions: How Civil Rights Violations Impact Police Data,
+        Predictive Policing Systems, and Justice. <em>New York University Law
+        Review Online</em>, 94, 192.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    SF Crime Analysis &mdash; Assignment 2 &mdash; DTU 02806 Social Data
+    Analysis and Visualization &mdash; April 2026<br>
+    <span style="font-size:0.8rem;">
+      Data: <a href="https://data.sfgov.org" target="_blank">San Francisco Open Data</a>
+      &nbsp;&middot;&nbsp;
+      <a href="index.html">Back to main site</a>
+    </span>
+  </p>
+</footer>
+
+</body>
+</html>
